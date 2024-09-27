@@ -10,8 +10,11 @@ data class TipoTrabajo(
     val id: Long,
 
     @Column(name = "nombre", nullable = false)
-    val nombre: String,
+    var nombre: String,
 
     @Column(name = "descripcion")
-    val descripcion: String?
+    var descripcion: String?,
+
+    @Column(name = "valorUnidad")
+    var valorUnidad: Int
 )

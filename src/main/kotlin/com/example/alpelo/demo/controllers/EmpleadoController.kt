@@ -1,6 +1,7 @@
 package com.example.alpelo.demo.controllers
 
 import com.example.alpelo.demo.models.Empleado
+import com.example.alpelo.demo.models.Nivel
 import com.example.alpelo.demo.models.Usuarios
 import com.example.alpelo.demo.repositories.EmpleadoRepository
 import org.springframework.beans.factory.annotation.Autowired
@@ -17,7 +18,11 @@ class EmpleadoControllerController (@Autowired private  val empleadoRepository: 
     fun getAllEmploye(): List<Empleado> =
         empleadoRepository.findAll().toList()
 
-    //fun createUser()
+    @PostMapping("/crear")
+    fun createEmploye(@RequestBody empleado: Empleado):ResponseEntity<Empleado>{
+        val newEmploye = empleadoRepository.save(empleado)
+        return ResponseEntity.ok(newEmploye)
+    }
 
     @GetMapping("/search/{id}")
     fun getEmployeById(@PathVariable("id") empleadoId:  Long): ResponseEntity<Empleado>{
@@ -26,25 +31,33 @@ class EmpleadoControllerController (@Autowired private  val empleadoRepository: 
         else ResponseEntity(HttpStatus.NOT_FOUND)
     }
 
-    @PutMapping("/update/{id}")
-    fun updareEmployeById(@PathVariable("id") empleadoId: Long, @RequestBody empleado: Empleado) : ResponseEntity<Empleado> {
-        val existingEmploye = empleadoRepository.findById(empleadoId).orElse(null)
+    @PatchMapping("/update/{id}")
+    fun updareEmployeById(@PathVariable id:Long, @RequestBody empleado: Map<String, Any>): Empleado? {
+       val  empleadoExistante = empleadoRepository.findById(id)
+        if(empleadoExistante.isPresent){
+            val empleadoActual = empleadoExistante.get()
 
-        if(existingEmploye == null){
-            return  ResponseEntity(HttpStatus.NOT_FOUND)
+            if (empleado.containsKey("nombreCompleto")) {
+                empleadoActual.nombreCompleto = empleado["nombreCompleto"] as String
+            }
+            if (empleado.containsKey("numeroContacto")) {
+                empleadoActual.numeroContacto = empleado["numeroContacto"] as String
+            }
+            if (empleado.containsKey("direccion")) {
+                empleadoActual.direccion = empleado["direccion"] as String
+            }
+            if (empleado.containsKey("cargo")) {
+                empleadoActual.cargo = empleado["cargo"] as String
+            }
+            if (empleado.containsKey("nivel")) {
+                val nivelStr = empleado["nivel"] as String
+                empleadoActual.nivel = Nivel.valueOf(nivelStr)
+            }
+
+            return empleadoRepository.save(empleadoActual)
+
         }
-
-        val  updateEmploye = existingEmploye.copy(
-            nombreCompleto = empleado.nombreCompleto,
-            numeroContacto = empleado.numeroContacto,
-            direccion = empleado.direccion,
-            edad = empleado.edad,
-            cargo = empleado.cargo
-        )
-
-        empleadoRepository.save(updateEmploye)
-        return ResponseEntity(updateEmploye, HttpStatus.OK)
-
+        return null
     }
 
     @DeleteMapping("/elminar/{id}")

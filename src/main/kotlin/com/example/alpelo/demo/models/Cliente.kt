@@ -10,16 +10,16 @@ data class Cliente(
     val id: Long,
 
     @Column(name = "nombre_completo")
-    val nombreCompleto: String,
+    var nombreCompleto: String,
 
     @Column(name = "numero_contacto")
-    val numeroContacto: String,
+    var numeroContacto: String,
 
     @Column(name = "direccion")
-    val direccion: String,
+    var direccion: String,
 
     @Column(name = "edad")
-    val edad: Int,
+    var edad: Int,
 
     @Column(name = "numero_identificacion", unique = true)
     val numeroIdentificacion: String

@@ -10,29 +10,30 @@ data class Empleado(
     val id: Long,
 
     @Column(name = "nombre_completo", nullable = false)
-    val nombreCompleto: String,
+    var nombreCompleto: String,
 
     @Column(name = "numero_contacto")
-    val numeroContacto: String?,
+    var numeroContacto: String?,
 
     @Column(name = "direccion")
-    val direccion: String?,
+    var direccion: String?,
 
-    @Column(name = "edad")
-    val edad: Int?,
+    @Column(name = "fecha_nacimiento")
+    var fechaNacimiento: java.time.LocalDate?,
 
-    @Column(name = "numero_identificacion", unique = true)
-    val numeroIdentificacion: String?,
+    @Column(name = "numero_identificacion", unique = true, nullable = false)
+    val numeroIdentificacion: String,
 
     @Column(name = "cargo")
-    val cargo: String?,
+    var cargo: String?,
 
     @Column(name = "nivel", nullable = false)
     @Enumerated(EnumType.STRING)
-    val nivel: Nivel
+    var nivel: Nivel
 )
 
 enum class Nivel {
     SUPERVISOR,
-    PATO
+    PATO,
+    ESTANDAR
 }
