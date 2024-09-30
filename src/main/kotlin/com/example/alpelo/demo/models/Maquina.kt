@@ -10,18 +10,18 @@ data class Maquina(
     val id: Long,
 
     @Column(name = "modelo")
-    val modelo: String?,
+    var modelo: String?,
 
     @Column(name = "nombre")
-    val nombre: String?,
+    var nombre: String?,
 
     @Column(name = "ubicacion")
-    val ubicacion: String?,
+    var ubicacion: String?,
 
     @Column(name = "estado")
-    val estado: String?,
+    var estado: String?,
 
     @ManyToOne
     @JoinColumn(name = "id_empleado_encargado")
-    val empleadoEncargado: Empleado?
+    var empleadoEncargado: Empleado?
 )

@@ -14,17 +14,17 @@ data class Pago(
     val trabajo: Trabajo,
 
     @Column(name = "monto", nullable = false)
-    val monto: java.math.BigDecimal,
+    var monto: java.math.BigDecimal,
 
     @Column(name = "fecha_pago", nullable = false)
-    val fechaPago: java.time.LocalDate,
+    var fechaPago: java.time.LocalDate,
 
     @Column(name = "medio_pago", nullable = false)
     @Enumerated(EnumType.STRING)
-    val medioPago: MedioPago,
+    var medioPago: MedioPago,
 
     @Column(name = "detalles_pago")
-    val detallesPago: String?
+    var detallesPago: String?
 )
 
 enum class MedioPago {

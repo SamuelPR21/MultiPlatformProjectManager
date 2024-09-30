@@ -2,7 +2,6 @@ package com.example.alpelo.demo.controllers
 
 import com.example.alpelo.demo.models.Empleado
 import com.example.alpelo.demo.models.Nivel
-import com.example.alpelo.demo.models.Usuarios
 import com.example.alpelo.demo.repositories.EmpleadoRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
