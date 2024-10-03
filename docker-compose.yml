@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    ports:
+      - "9001:9001"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/alpeloddbb
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: Samuel,2005
+    depends_on:
+      - db
+
+  db:
+    container_name: db_postgres
+    image: postgres:latest
+    environment:
+      POSTGRES_DB: alpeloddbb
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: Samuel,2005
+    ports:
+      - "5433:5432"
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+
+volumes:
+  pg_data:
