@@ -38,12 +38,13 @@
 
 	tasks.withType<Jar> {
 		manifest {
-			attributes["Main-Class"] = "com.example.alpelo.demo.ProcjetcAlpeloApplication"
+			attributes["Main-Class"] = "com.example.alpelo.demo.ProcjetcAlpeloApplication.kt"
 		}
 	}
 
 	tasks.named<org.springframework.boot.gradle.tasks.bundling.BootJar>("bootJar") {
-		mainClass.set("com.example.alpelo.demo.ProcjetcAlpeloApplication")
+		mainClass.set("com.example.alpelo.demo.ProcjetcAlpeloApplication.kt")
+
 	}
 
 

@@ -12,29 +12,29 @@ data class Trabajo(
     val id: Long,
 
     @Column(name = "nombre", nullable = false)
-    val nombre: String,
+    var nombre: String,
 
     @Column(name = "descripcion_corta")
-    val descripcionCorta: String?,
+    var descripcionCorta: String?,
 
     @Column(name = "estado")
-    val estado: String?,
+    var estado: String?,
 
     @Column(name = "fecha_inicio")
-    val fechaInicio: java.time.LocalDate?,
+    var fechaInicio: java.time.LocalDate?,
 
     @Column(name = "fecha_finalizacion")
-    val fechaFinalizacion: java.time.LocalDate?,
+    var fechaFinalizacion: java.time.LocalDate?,
 
     @ManyToOne
     @JoinColumn(name = "id_cliente")
-    val cliente: Cliente,
+    var cliente: Cliente,
 
     @ManyToOne
     @JoinColumn(name = "id_usuario")
-    val usuario: Usuarios,
+    var usuario: Usuarios,
 
     @ManyToOne
     @JoinColumn(name = "id_tipo_trabajo")
-    val tipoTrabajo: TipoTrabajo
+    var tipoTrabajo: TipoTrabajo
 )

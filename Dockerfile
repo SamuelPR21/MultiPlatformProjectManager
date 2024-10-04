@@ -22,7 +22,7 @@ FROM openjdk:17-jdk-slim
 COPY --from=build /app/build/libs/demo-0.0.1-SNAPSHOT.jar app.jar
 
 # Establece el puerto que escucha la aplicación
-EXPOSE 9001
+EXPOSE 9010
 
 # Comando para ejecutar la aplicación
-ENTRYPOINT ["java", "-jar", "/app.jar"]
+ENTRYPOINT ["java", "-jar", "app.jar", "com.example.alpelo.demo.ProcjetcAlpeloApplication.kt"]

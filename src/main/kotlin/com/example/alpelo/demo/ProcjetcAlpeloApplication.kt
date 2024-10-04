@@ -8,4 +8,5 @@ class ProcjetcAlpeloApplication
 
 fun main(args: Array<String>) {
 	runApplication<ProcjetcAlpeloApplication>(*args)
+
 }

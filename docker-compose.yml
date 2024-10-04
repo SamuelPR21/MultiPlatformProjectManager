@@ -4,7 +4,7 @@ services:
   app:
     build: .
     ports:
-      - "9001:9001"
+      - "9010:9010"
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/alpeloddbb
       SPRING_DATASOURCE_USERNAME: postgres
