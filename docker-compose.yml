@@ -1,0 +1,28 @@
+version: '3.8'
+services:
+  db:
+    image: postgres:14
+    environment:
+      POSTGRES_DB: alpeloddbb
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: Samuel,2005
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  app:
+    image: alpelo-iso
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "9010:9010"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/alpeloddbb
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: Samuel,2005
+
+
+volumes:
+  postgres_data:
