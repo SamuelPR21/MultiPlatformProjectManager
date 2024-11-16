@@ -15,5 +15,5 @@ data class TrabajoMaquina(
 
     @ManyToOne
     @JoinColumn(name = "id_maquina", nullable = false)
-    val maquina: Maquina
+    var maquina: Maquina
 )
