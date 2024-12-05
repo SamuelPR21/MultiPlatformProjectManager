@@ -20,10 +20,12 @@ class UserSecurityService(private val usuarioRepository: UsuarioReposittory):
         val usuario = usuarioRepository.findByNombreUsuario(username)
             ?: throw UsernameNotFoundException("Usuario no encontrado con el nombre de usuario: $username")
 
+
+
         return User.builder()
             .username(usuario.nombreUsuario)
             .password(usuario.contrasena)
-            .roles(usuario.rol?.name?: "USUARIO_NORMAL")
+            .roles(usuario.rol?.name)
             .build()
         //UserDetailsImpl(usuario) // Debes implementar `UserDetailsImpl`
     }
