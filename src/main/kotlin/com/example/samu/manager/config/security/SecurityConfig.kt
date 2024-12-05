@@ -3,7 +3,9 @@ package com.example.samu.manager.config.security
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.HttpMethod
+import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.config.Customizer
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
@@ -17,6 +19,8 @@ class SecurityConfig {
         http
             .csrf{ it.disable() }
             .authorizeRequests()
+
+            .requestMatchers(HttpMethod.POST, "/auth/**").permitAll()
 
             .requestMatchers(HttpMethod.GET, "/cliente/**").hasRole("USUARIO_NORMAL")
             .requestMatchers(HttpMethod.POST, "/cliente/**").hasRole("USUARIO_NORMAL")
@@ -66,4 +70,12 @@ class SecurityConfig {
     fun PasswordEncoder(): PasswordEncoder {
         return BCryptPasswordEncoder()
     }
+
+    @Bean
+    @Throws(Exception::class)
+    fun authenticationManager(configuration: AuthenticationConfiguration): AuthenticationManager {
+        return configuration.authenticationManager
+    }
+
+
 }
