@@ -28,7 +28,7 @@ class JwtFilter (private val jwtUtil: JwtUtil, private val userDetailsService: U
         // Validar que sea un header de autorización válido
         val authorizationHeader = request.getHeader("Authorization") // HttpHeaders.AUTHORIZATION corregido a "Authorization"
 
-        if (authorizationHeader == null || authorizationHeader.isEmpty() || !authorizationHeader.startsWith("Bearer ")) {
+        if (authorizationHeader == null || authorizationHeader.isEmpty() || !authorizationHeader.startsWith("Bearer")) {
             filterChain.doFilter(request, response)
             return
         }
