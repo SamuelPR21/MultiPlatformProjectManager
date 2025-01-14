@@ -1,5 +1,6 @@
 package com.example.samu.manager.controller
 
+import com.example.samu.manager.models.Estado
 import com.example.samu.manager.models.Maquina
 import com.example.samu.manager.repositories.EmpleadoRepository
 import com.example.samu.manager.repositories.MaquinaRepository
@@ -51,7 +52,8 @@ class MaquinaController(
                 maquinaActual.ubicacion = maquina["ubicacion"] as String
             }
             if (maquina.containsKey("estado")) {
-                maquinaActual.estado = maquina["estado"] as String
+                val estadoStrg = maquina["estado"] as String
+                maquinaActual.estado = Estado.valueOf(estadoStrg)
             }
             if (maquina.containsKey("empleadoEncargado")) {
                 val empleadoId = maquina["empleadoEncargado"] as Long

@@ -22,5 +22,9 @@ data class Cliente(
     var edad: Int,
 
     @Column(name = "numero_identificacion", unique = true)
-    val numeroIdentificacion: String
+    val numeroIdentificacion: String,
+
+    @ManyToOne
+    @JoinColumn(name = "id_usuario", nullable = false)
+    var usuario: Usuarios
 )

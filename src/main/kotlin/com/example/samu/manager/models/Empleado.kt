@@ -29,7 +29,11 @@ data class Empleado(
 
     @Column(name = "nivel", nullable = false)
     @Enumerated(EnumType.STRING)
-    var nivel: Nivel
+    var nivel: Nivel,
+
+    @ManyToOne
+    @JoinColumn(name = "id_usuario", nullable = false)
+    var usuario: Usuarios
 )
 
 enum class Nivel {

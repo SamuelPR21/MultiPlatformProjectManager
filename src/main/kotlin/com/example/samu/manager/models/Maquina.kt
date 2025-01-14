@@ -18,10 +18,23 @@ data class Maquina(
     @Column(name = "ubicacion")
     var ubicacion: String?,
 
-    @Column(name = "estado")
-    var estado: String?,
+    @Column(name = "estado", nullable = false)
+    @Enumerated(EnumType.STRING)
+    var estado: Estado,
 
     @ManyToOne
     @JoinColumn(name = "id_empleado_encargado")
-    var empleadoEncargado: Empleado?
+    var empleadoEncargado: Empleado?,
+
+    @ManyToOne
+    @JoinColumn(name = "id_usuario", nullable = false)
+    var usuario: Usuarios
+
 )
+
+enum class Estado {
+    LABORANDO,
+    MANTENIMIENTO,
+    BARADO
+}
+
