@@ -25,6 +25,13 @@ class JwtFilter (private val jwtUtil: JwtUtil, private val userDetailsService: U
         response: HttpServletResponse,
         filterChain: FilterChain
     ) {
+        val path = request.requestURI
+        //Exluir rutas abiertas
+        if(path.startsWith("/auth/login") || path.startsWith("/auth/register")){
+            filterChain.doFilter(request, response)
+            return
+        }
+
         // Validar que sea un header de autorización válido
         val authorizationHeader = request.getHeader("Authorization") // HttpHeaders.AUTHORIZATION corregido a "Authorization"
 
@@ -35,7 +42,7 @@ class JwtFilter (private val jwtUtil: JwtUtil, private val userDetailsService: U
 
         //Validar el token
         val token = authorizationHeader.split(" ")[1].trim()
-        if (!JwtUtil().validate(token)) {
+        if (!jwtUtil.validate(token)) {
             filterChain.doFilter(request, response)
             return
         }
@@ -47,7 +54,7 @@ class JwtFilter (private val jwtUtil: JwtUtil, private val userDetailsService: U
         //Cargar el usuario ene l contexto de seguridad
         val authentication = UsernamePasswordAuthenticationToken(
             userDetails.username,
-            null,  // La contraseña no es necesaria en este contexto, pero se puede incluir si es necesario
+            null,  // La contraseña no es necesaria en este contexto
             userDetails.authorities  // Esto carga las autoridades/roles del usuario
         )
         SecurityContextHolder.getContext().authentication = authentication

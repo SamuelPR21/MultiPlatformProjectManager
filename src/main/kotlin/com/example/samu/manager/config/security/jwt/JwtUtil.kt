@@ -15,7 +15,7 @@ class JwtUtil {
 
 
     // Tiempo de expiración del token (en este caso, 1 día)
-    private val expirationTime = TimeUnit.DAYS.toMillis(15)
+    private val expirationTime = TimeUnit.DAYS.toMillis(1)
 
     /**
      * Método para crear un token JWT con el nombre de usuario como "subject".
