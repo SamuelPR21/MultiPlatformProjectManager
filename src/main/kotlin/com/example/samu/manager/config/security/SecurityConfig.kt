@@ -54,6 +54,10 @@ class SecurityConfig (private val jwtFilter: JwtFilter) {
                     .requestMatchers(HttpMethod.PATCH, "/job/**").hasRole("USUARIO_NORMAL")
                     .requestMatchers(HttpMethod.DELETE, "/job/**").hasRole("USUARIO_NORMAL")
 
+                    .requestMatchers(HttpMethod.POST, "/actvidad/**").hasRole("USUARIO_NORMAL")
+                    .requestMatchers(HttpMethod.GET, "/actvidad/**").hasRole("USUARIO_NORMAL")
+                    .requestMatchers(HttpMethod.DELETE, "/actvidad/**").hasRole("USUARIO_NORMAL")
+                    .requestMatchers(HttpMethod.PATCH, "/actvidad/**").hasRole("USUARIO_NORMAL")
 
                     .requestMatchers(HttpMethod.GET, "/users/**").hasRole("SUPERUSUARIO")
                     .requestMatchers(HttpMethod.POST, "/users/**").hasRole("SUPERUSUARIO")
