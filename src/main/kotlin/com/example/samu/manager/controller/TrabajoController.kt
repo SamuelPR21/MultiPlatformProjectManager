@@ -26,7 +26,7 @@ class TrabajoController(
     fun getAllTrabajo(): List<Trabajo> =
         trabajoRepository.findAll().toList()
 
-
+    //Se debe modificar
     @PostMapping("/crear")
     fun createJob(@RequestBody trabajo: Trabajo): ResponseEntity<Trabajo> {
         val newJob = trabajoRepository.save(trabajo)
@@ -39,7 +39,7 @@ class TrabajoController(
         return if(pago != null) ResponseEntity(pago, HttpStatus.OK)
         else ResponseEntity(HttpStatus.NOT_FOUND)
     }
-
+    //Se debe modificar
     @PatchMapping("/update/{id}")
     fun updateJobById(@PathVariable id:Long,
                       @RequestBody trabajo: Map<String, Any>):
@@ -78,16 +78,6 @@ class TrabajoController(
                 }
             }
 
-            if (trabajo.containsKey("tipoTrabajo")) {
-                val tipoTrabajoId = trabajo["tipoTrabajo"] as Long
-                val tipoTrabajoExistente = tipoTrabajoRepository.findById(tipoTrabajoId)
-
-                if (tipoTrabajoExistente.isPresent){
-                    jobActual.tipoTrabajo = tipoTrabajoExistente.get()
-                }else{
-                    println("el tipo de trabajo con ID $tipoTrabajoId no encontrado. El campo no se actualizará.")
-                }
-            }
             if (trabajo.containsKey("usuario")) {
                 val usuarioId = trabajo["usuario"] as Long
                 val usuarioExistente = usuarioReposittory.findById(usuarioId)

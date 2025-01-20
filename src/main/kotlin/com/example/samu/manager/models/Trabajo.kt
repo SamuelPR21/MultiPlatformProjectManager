@@ -32,7 +32,6 @@ data class Trabajo(
     @JoinColumn(name = "id_usuario")
     var usuario: Usuarios,
 
-    @ManyToOne
-    @JoinColumn(name = "id_tipo_trabajo")
-    var tipoTrabajo: TipoTrabajo
+    @OneToMany(mappedBy = "trabajo", cascade = [CascadeType.ALL], orphanRemoval = true)
+    val actividades: MutableList<Actividad> = mutableListOf()
 )
