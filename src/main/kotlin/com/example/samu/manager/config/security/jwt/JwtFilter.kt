@@ -5,6 +5,7 @@ import jakarta.servlet.ServletException
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.http.HttpHeaders
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.context.SecurityContextHolder
@@ -33,7 +34,7 @@ class JwtFilter (private val jwtUtil: JwtUtil, private val userDetailsService: U
         }
 
         // Validar que sea un header de autorización válido
-        val authorizationHeader = request.getHeader("Authorization") // HttpHeaders.AUTHORIZATION corregido a "Authorization"
+        val authorizationHeader = request.getHeader(HttpHeaders.AUTHORIZATION) // HttpHeaders.AUTHORIZATION corregido a "Authorization"
 
         if (authorizationHeader == null || authorizationHeader.isEmpty() || !authorizationHeader.startsWith("Bearer")) {
             filterChain.doFilter(request, response)
@@ -48,7 +49,7 @@ class JwtFilter (private val jwtUtil: JwtUtil, private val userDetailsService: U
         }
 
         //Caragar el usuario del UserDatailsService
-        val username = JwtUtil().getUsername(token)
+        val username = jwtUtil.getUsername(token)
         val userDetails: UserDetails = userDetailsService.loadUserByUsername(username)
 
         //Cargar el usuario ene l contexto de seguridad

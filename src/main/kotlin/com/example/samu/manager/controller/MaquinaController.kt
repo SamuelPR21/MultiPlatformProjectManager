@@ -1,19 +1,25 @@
 package com.example.samu.manager.controller
 
+import com.example.samu.manager.config.services.dto.MaquinaDTO
 import com.example.samu.manager.models.Estado
 import com.example.samu.manager.models.Maquina
 import com.example.samu.manager.repositories.EmpleadoRepository
 import com.example.samu.manager.repositories.MaquinaRepository
+import com.example.samu.manager.repositories.UsuarioReposittory
+import jakarta.validation.Valid
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.data.jpa.domain.AbstractPersistable_.id
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
+
 
 @RestController
 @RequestMapping("/maquina")
 class MaquinaController(
     @Autowired private val maquinaRepository: MaquinaRepository,
-    private val empleadoRepository: EmpleadoRepository
+    private val empleadoRepository: EmpleadoRepository,
+    private val usuarioReposittory: UsuarioReposittory
 ){
 
     @GetMapping("/todos")
@@ -21,9 +27,26 @@ class MaquinaController(
         maquinaRepository.findAll().toList()
 
     @PostMapping("/crear")
-    fun createMaquina(@RequestBody maquina: Maquina): ResponseEntity<Maquina> {
-        val newTipoTrabajo = maquinaRepository.save(maquina)
-        return ResponseEntity.ok(newTipoTrabajo)
+    fun createMaquina(@RequestBody @Valid maquinaDTO: MaquinaDTO): ResponseEntity<Maquina> {
+
+        val empleado = empleadoRepository.findById(maquinaDTO.empleadoEncargadoId)
+            .orElseThrow{IllegalArgumentException("El empleado con ID ${maquinaDTO.empleadoEncargadoId} no existe")}
+
+        val usuario = usuarioReposittory.findById(maquinaDTO.usuarioId)
+            .orElseThrow{IllegalArgumentException("El usuario con ID ${maquinaDTO.usuarioId} no existe")}
+
+        val maquina = Maquina(
+            id = 0L,
+            modelo = maquinaDTO.modelo,
+            nombre = maquinaDTO.nombre,
+            ubicacion = maquinaDTO.ubicacion,
+            estado = maquinaDTO.estado,
+            empleadoEncargado = empleado,
+            usuario = usuario
+        )
+        val nuevaMaquina = maquinaRepository.save(maquina)
+        return ResponseEntity.ok(nuevaMaquina)
+
     }
 
     @GetMapping("/search/{id}")

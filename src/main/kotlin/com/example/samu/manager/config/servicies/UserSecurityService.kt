@@ -1,6 +1,5 @@
 package com.example.samu.manager.config.servicies
 
-import com.example.samu.manager.models.Usuarios
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.core.userdetails.UsernameNotFoundException
@@ -27,6 +26,5 @@ class UserSecurityService(private val usuarioRepository: UsuarioReposittory):
             .password(usuario.contrasena)
             .roles(usuario.rol?.name)
             .build()
-        //UserDetailsImpl(usuario) // Debes implementar `UserDetailsImpl`
     }
 }

@@ -16,14 +16,16 @@ class JwtUtil {
 
     // Tiempo de expiración del token (en este caso, 1 día)
     private val expirationTime = TimeUnit.DAYS.toMillis(1)
+    val algorithm = Algorithm.HMAC256(secretKey) // Algoritmo de firma
 
-    /**
-     * Método para crear un token JWT con el nombre de usuario como "subject".
-     */
-    fun create(username: String): String {
-        val algorithm = Algorithm.HMAC256(secretKey) // Algoritmo de firma
+    //Método para crear un token JWT con el nombre de usuario como "subject".
+
+    fun create(username: String, roles: List<String>): String {
+
         return JWT.create()
-            .withSubject(username) // Usuario asociado al token
+            .withSubject(username)
+            .withClaim("roles", roles)
+            .withIssuer("alpelo-Manager") // Emisor del token
             .withIssuedAt(Date()) // Fecha de emisión
             .withExpiresAt(Date(System.currentTimeMillis() + expirationTime)) // Fecha de expiración
             .sign(algorithm) // Firma del token
@@ -32,7 +34,7 @@ class JwtUtil {
 
     fun validate(jwt: String): Boolean {
         try {
-            JWT.require(Algorithm.HMAC256(secretKey))
+            JWT.require(algorithm)
                 .build()
                 .verify(jwt)
             return true;
@@ -42,7 +44,7 @@ class JwtUtil {
     }
 
     fun getUsername(jwt: String): String {
-        return  JWT.require(Algorithm.HMAC256(secretKey))
+        return  JWT.require(algorithm)
                 .build()
                 .verify(jwt)
                 .subject
