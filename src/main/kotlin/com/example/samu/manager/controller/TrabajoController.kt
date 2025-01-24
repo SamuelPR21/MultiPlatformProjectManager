@@ -1,7 +1,11 @@
 package com.example.samu.manager.controller
 
+import com.example.samu.manager.config.servicies.dto.TrabajoDTO
 import com.example.samu.manager.models.Trabajo
+import com.example.samu.manager.models.TrabajoEmpleado
+import com.example.samu.manager.models.TrabajoMaquina
 import com.example.samu.manager.repositories.*
+import jakarta.validation.Valid
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -26,11 +30,56 @@ class TrabajoController(
     fun getAllTrabajo(): List<Trabajo> =
         trabajoRepository.findAll().toList()
 
-    //Se debe modificar
     @PostMapping("/crear")
-    fun createJob(@RequestBody trabajo: Trabajo): ResponseEntity<Trabajo> {
-        val newJob = trabajoRepository.save(trabajo)
-        return ResponseEntity.ok(newJob)
+    fun createJob(@RequestBody @Valid trabajoDTO: TrabajoDTO): ResponseEntity<Trabajo> {
+
+        val usuario = usuarioReposittory.findById(trabajoDTO.usuario)
+            .orElseThrow{IllegalArgumentException("El usuario con ID ${trabajoDTO.usuario} no existe")}
+
+        val cliente = clienteRepository.findById(trabajoDTO.cliente)
+            .orElseThrow{IllegalArgumentException("El cliente con ID ${trabajoDTO.cliente} no existe")}
+
+        val trabajo = Trabajo(
+            id = 0L,
+            nombre = trabajoDTO.nombre,
+            descripcionCorta = trabajoDTO.descripcionCorta,
+            estado = trabajoDTO.estado,
+            fechaInicio = trabajoDTO.fechaInicio,
+            fechaFinalizacion = trabajoDTO.fechaFinalizacion,
+            cliente =  cliente,
+            usuario = usuario,
+        )
+
+
+        val nuevoTrabajo = trabajoRepository.save(trabajo)
+
+        // Relacionar empleados con el trabajo
+        trabajoDTO.empleados.forEach { empleadoId ->
+            val empleado = empleadoRepository.findById(empleadoId)
+                .orElseThrow { IllegalArgumentException("El empleado con ID $empleadoId no existe") }
+
+            val trabajoEmpleado = TrabajoEmpleado(
+                trabajo = nuevoTrabajo,
+                empleado = empleado
+            )
+            trabajoEmpleadoRepository.save(trabajoEmpleado)
+        }
+
+        // Relacionar máquinas con el trabajo
+        trabajoDTO.maquinas.forEach { maquinaId ->
+            val maquina = maquinaRepository.findById(maquinaId)
+                .orElseThrow { IllegalArgumentException("La máquina con ID $maquinaId no existe") }
+
+            val trabajoMaquina = TrabajoMaquina(
+                trabajo = nuevoTrabajo,
+                maquina = maquina
+            )
+            trabajoMaquinaRepository.save(trabajoMaquina)
+        }
+
+
+
+        return ResponseEntity.ok(nuevoTrabajo)
     }
 
     @GetMapping("/search/{id}")

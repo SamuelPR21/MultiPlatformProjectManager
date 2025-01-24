@@ -1,26 +1,49 @@
 package com.example.samu.manager.controller
 
+import com.example.samu.manager.config.servicies.dto.EmpleadoDTO
 import com.example.samu.manager.models.Empleado
 import com.example.samu.manager.models.Nivel
 import com.example.samu.manager.repositories.EmpleadoRepository
+import com.example.samu.manager.repositories.UsuarioReposittory
+import jakarta.validation.Valid
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
+import javax.swing.text.html.HTML.Tag.OL
 
 @RestController
 @RequestMapping("/empleado")
 
-class EmpleadoControllerController (@Autowired private  val empleadoRepository: EmpleadoRepository){
+class EmpleadoControllerController (@Autowired
+                                    private  val empleadoRepository: EmpleadoRepository,
+                                    private val usuarioReposittory: UsuarioReposittory
+){
 
     @GetMapping("/todos")
     fun getAllEmploye(): List<Empleado> =
         empleadoRepository.findAll().toList()
 
     @PostMapping("/crear")
-    fun createEmploye(@RequestBody empleado: Empleado): ResponseEntity<Empleado> {
-        val newEmploye = empleadoRepository.save(empleado)
-        return ResponseEntity.ok(newEmploye)
+    fun createEmploye(@RequestBody @Valid empleadoDTO: EmpleadoDTO): ResponseEntity<Empleado> {
+
+        val usuario = usuarioReposittory.findById(empleadoDTO.usuarioId)
+            .orElseThrow{IllegalArgumentException("El usuario con ID ${empleadoDTO.usuarioId} no existe")}
+
+        val empleado = Empleado(
+            id = 0L,
+            nombreCompleto = empleadoDTO.nombreCompleto,
+            numeroContacto = empleadoDTO.numeroContacto,
+            direccion = empleadoDTO.direccion,
+            fechaNacimiento = empleadoDTO.fechaNacimiento,
+            numeroIdentificacion = empleadoDTO.numeroIdentificacion,
+            cargo = empleadoDTO.cargo,
+            nivel = empleadoDTO.nivel,
+            usuario = usuario
+        )
+
+        val nuevoEmpleado = empleadoRepository.save(empleado)
+        return ResponseEntity.ok(nuevoEmpleado)
     }
 
     @GetMapping("/search/{id}")

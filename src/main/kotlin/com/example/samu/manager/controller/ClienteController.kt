@@ -1,7 +1,10 @@
 package com.example.samu.manager.controller
 
+import com.example.samu.manager.config.servicies.dto.ClienteDTO
 import com.example.samu.manager.models.Cliente
 import com.example.samu.manager.repositories.ClienteRepository
+import com.example.samu.manager.repositories.UsuarioReposittory
+import jakarta.validation.Valid
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -11,16 +14,32 @@ import org.springframework.web.bind.annotation.*
 @RestController
 @RequestMapping("/cliente")
 
-class ClienteController(@Autowired private val clienteRepository: ClienteRepository) {
+class ClienteController(@Autowired
+                        private val clienteRepository: ClienteRepository,
+                        private val usuarioReposittory: UsuarioReposittory
+) {
 
     @GetMapping("/todos")
     fun getAllCustemer():List<Cliente> =
         clienteRepository.findAll().toList()
 
     @PostMapping("/crear")
-    fun createCustomer(@RequestBody cliente: Cliente): ResponseEntity<Cliente> {
-        val newEmploye = clienteRepository.save(cliente)
-        return ResponseEntity.ok(newEmploye)
+    fun createCustomer(@RequestBody @Valid clienteDTO: ClienteDTO): ResponseEntity<Cliente> {
+        val usuario = usuarioReposittory.findById(clienteDTO.usuarioId)
+            .orElseThrow{IllegalArgumentException("El usuario con ID ${clienteDTO.usuarioId} no existe")}
+
+        val cliente = Cliente(
+            id = 0L,
+            nombreCompleto = clienteDTO.nombreCompleto,
+            numeroContacto = clienteDTO.numeroContacto,
+            direccion = clienteDTO.direccion,
+            edad = clienteDTO.edad,
+            numeroIdentificacion = clienteDTO.numeroIdentificacion,
+            usuario = usuario
+        )
+
+        val nuevoCliente = clienteRepository.save(cliente)
+        return ResponseEntity.ok(nuevoCliente)
     }
     @GetMapping("/search/{id}")
     fun getCustomerById(@PathVariable("id") clienteId:  Long): ResponseEntity<Cliente> {
