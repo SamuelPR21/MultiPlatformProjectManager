@@ -14,6 +14,7 @@ import java.time.LocalDate
 
 
 @RestController
+
 @RequestMapping("/job")
 class TrabajoController(
     @Autowired private val trabajoRepository: TrabajoRepository,
@@ -27,17 +28,30 @@ class TrabajoController(
 ){
 
     @GetMapping("/todos")
-    fun getAllTrabajo(): List<Trabajo> =
-        trabajoRepository.findAll().toList()
+    fun getAllTrabajo(): List<TrabajoDTO> {
+        return  trabajoRepository.findAll().map { trabajo->
+            TrabajoDTO(
+                nombre = trabajo.nombre ?: "",
+                descripcionCorta = trabajo.descripcionCorta  ?: "",
+                estado = trabajo.estado  ?: "",
+                fechaInicio = trabajo.fechaInicio ?: LocalDate.now(),
+                fechaFinalizacion = trabajo.fechaFinalizacion ?: LocalDate.now(),
+                cliente = trabajo.cliente.id,
+                usuario = trabajo.usuario.id,
+                empleados = trabajo.empleados.map { it.empleado.id },
+                maquinas = trabajo.maquinas.map { it.maquina.id }
+            )
+        }
+    }
 
     @PostMapping("/crear")
-    fun createJob(@RequestBody @Valid trabajoDTO: TrabajoDTO): ResponseEntity<Trabajo> {
+    fun createJob(@RequestBody @Valid trabajoDTO: TrabajoDTO): ResponseEntity<TrabajoDTO> {
 
         val usuario = usuarioReposittory.findById(trabajoDTO.usuario)
-            .orElseThrow{IllegalArgumentException("El usuario con ID ${trabajoDTO.usuario} no existe")}
+            .orElseThrow { IllegalArgumentException("El usuario con ID ${trabajoDTO.usuario} no existe") }
 
         val cliente = clienteRepository.findById(trabajoDTO.cliente)
-            .orElseThrow{IllegalArgumentException("El cliente con ID ${trabajoDTO.cliente} no existe")}
+            .orElseThrow { IllegalArgumentException("El cliente con ID ${trabajoDTO.cliente} no existe") }
 
         val trabajo = Trabajo(
             id = 0L,
@@ -46,40 +60,46 @@ class TrabajoController(
             estado = trabajoDTO.estado,
             fechaInicio = trabajoDTO.fechaInicio,
             fechaFinalizacion = trabajoDTO.fechaFinalizacion,
-            cliente =  cliente,
+            cliente = cliente,
             usuario = usuario,
         )
 
 
         val nuevoTrabajo = trabajoRepository.save(trabajo)
 
-        // Relacionar empleados con el trabajo
-        trabajoDTO.empleados.forEach { empleadoId ->
-            val empleado = empleadoRepository.findById(empleadoId)
-                .orElseThrow { IllegalArgumentException("El empleado con ID $empleadoId no existe") }
 
-            val trabajoEmpleado = TrabajoEmpleado(
-                trabajo = nuevoTrabajo,
-                empleado = empleado
-            )
-            trabajoEmpleadoRepository.save(trabajoEmpleado)
+        // Agregar empleados
+        val empleados = trabajoDTO.empleados.map { empId ->
+            val empleado = empleadoRepository.findById(empId)
+                .orElseThrow { IllegalArgumentException("El empleado con ID $empId no existe") }
+            TrabajoEmpleado(trabajo = nuevoTrabajo, empleado = empleado)
+        }
+        trabajoEmpleadoRepository.saveAll(empleados)
+
+        // Agregar máquinas
+        val maquinas = trabajoDTO.maquinas.map { maqId ->
+            val maquina = maquinaRepository.findById(maqId)
+                .orElseThrow { IllegalArgumentException("La máquina con ID $maqId no existe") }
+            TrabajoMaquina(trabajo = nuevoTrabajo, maquina = maquina)
         }
 
-        // Relacionar máquinas con el trabajo
-        trabajoDTO.maquinas.forEach { maquinaId ->
-            val maquina = maquinaRepository.findById(maquinaId)
-                .orElseThrow { IllegalArgumentException("La máquina con ID $maquinaId no existe") }
-
-            val trabajoMaquina = TrabajoMaquina(
-                trabajo = nuevoTrabajo,
-                maquina = maquina
-            )
-            trabajoMaquinaRepository.save(trabajoMaquina)
-        }
+        trabajoMaquinaRepository.saveAll(maquinas)
 
 
+        val ResponseDTO = TrabajoDTO(
+            nombre = trabajo.nombre ?: "",
+            descripcionCorta = trabajo.descripcionCorta  ?: "",
+            estado = trabajo.estado  ?: "",
+            fechaInicio = trabajo.fechaInicio ?: LocalDate.now(),
+            fechaFinalizacion = trabajo.fechaFinalizacion ?: LocalDate.now(),
+            cliente = trabajo.cliente.id,
+            usuario = trabajo.usuario.id,
+            empleados = trabajo.empleados.map { it.empleado.id },
+            maquinas = trabajo.maquinas.map { it.maquina.id }
+        )
 
-        return ResponseEntity.ok(nuevoTrabajo)
+
+        return ResponseEntity.ok(ResponseDTO)
     }
 
     @GetMapping("/search/{id}")

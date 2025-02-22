@@ -1,9 +1,11 @@
 package com.example.samu.manager.controller
 
+import com.example.samu.manager.config.servicies.dto.ActividadDTO
 import com.example.samu.manager.models.Actividad
 import com.example.samu.manager.repositories.ActividadRepository
 import com.example.samu.manager.repositories.TipoTrabajoRepository
 import com.example.samu.manager.repositories.TrabajoRepository
+import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
@@ -18,17 +20,25 @@ class ActidadController(
 ) {
 
     //Registrar actividad
-    @PostMapping("{idTrabajo}/crear")
-    fun registrarActividad(@PathVariable idTrabajo: Long, @RequestBody nuevaActividad: Actividad): ResponseEntity<Any>{
-        val trabajo = trabajoRepository.findById(idTrabajo).orElse(null)
-        return if (trabajo!= null){
-            nuevaActividad.trabajo = trabajo
-            actividadRepository.save(nuevaActividad)
-            ResponseEntity.ok("Actividad registrada correctamente")
-        }else{
-            ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body("Trabajo con ID $idTrabajo no encontrado.")
-        }
+    @PostMapping("/{idTrabajo}/crear")
+    fun registrarActividad(@RequestBody @Valid actividadDTO: ActividadDTO): ResponseEntity<Actividad>{
+        val tipoTrabajo = tipoTrabajoRepository.findById(actividadDTO.tipoTrabajoId)
+
+            .orElseThrow { IllegalArgumentException("El tipo de trabajo con ID ${actividadDTO.tipoTrabajoId} no existe") }
+
+        val trabajo = trabajoRepository.findById(actividadDTO.trabajoId)
+            .orElseThrow { IllegalArgumentException("El trabajo con ID ${actividadDTO.trabajoId} no existe") }
+
+        val actividad = Actividad(
+            id = 0L,
+            fechaTrabajada = actividadDTO.fechaTrabajada,
+            cantidadUnidades = actividadDTO.cantidadUnidades,
+            tipoTrabajo = tipoTrabajo,
+            trabajo = trabajo
+        )
+
+        val nuevaActividad = actividadRepository.save(actividad)
+        return  ResponseEntity.ok(nuevaActividad)
     }
 
 

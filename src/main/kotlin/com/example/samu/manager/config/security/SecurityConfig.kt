@@ -70,6 +70,7 @@ class SecurityConfig (private val jwtFilter: JwtFilter) {
 
             .addFilterBefore(jwtFilter, BasicAuthenticationFilter::class.java)
 
+
         return http.build()
     }
 

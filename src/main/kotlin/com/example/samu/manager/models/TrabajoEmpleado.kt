@@ -1,5 +1,6 @@
 package com.example.samu.manager.models
 
+import com.fasterxml.jackson.annotation.JsonBackReference
 import jakarta.persistence.*
 
 @Entity
@@ -9,6 +10,7 @@ data class TrabajoEmpleado(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long? = null,
 
+    @JsonBackReference
     @ManyToOne
     @JoinColumn(name = "id_trabajo", nullable = false)
     val trabajo: Trabajo,

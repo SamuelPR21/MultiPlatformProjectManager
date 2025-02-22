@@ -1,5 +1,9 @@
 package com.example.samu.manager.models
 
+import com.example.samu.manager.models.TrabajoEmpleado
+import com.example.samu.manager.models.TrabajoMaquina
+import com.fasterxml.jackson.annotation.JsonIgnore
+
 import jakarta.persistence.*
 
 @Entity
@@ -32,6 +36,12 @@ data class Trabajo(
     @JoinColumn(name = "id_usuario")
     var usuario: Usuarios,
 
-    @OneToMany(mappedBy = "trabajo", cascade = [CascadeType.ALL], orphanRemoval = true)
-    val actividades: MutableList<Actividad> = mutableListOf()
+    @JsonIgnore
+    @OneToMany(mappedBy = "trabajo")
+    var empleados: MutableList<TrabajoEmpleado> = mutableListOf(),
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "trabajo")
+    var maquinas: MutableList<TrabajoMaquina> = mutableListOf()
+
 )

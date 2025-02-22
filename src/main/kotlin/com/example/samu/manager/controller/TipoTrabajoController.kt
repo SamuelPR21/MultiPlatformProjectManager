@@ -1,7 +1,9 @@
 package com.example.samu.manager.controller
 
+import com.example.samu.manager.config.servicies.dto.TipoTRabajoDTO
 import com.example.samu.manager.models.TipoTrabajo
 import com.example.samu.manager.repositories.TipoTrabajoRepository
+import jakarta.validation.Valid
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -17,9 +19,15 @@ class TipoTrabajoController(@Autowired private val tipoTrabajoRepository: TipoTr
         tipoTrabajoRepository.findAll().toList()
 
     @PostMapping("/crear")
-    fun createEmploye(@RequestBody tipoTrabajo: TipoTrabajo): ResponseEntity<TipoTrabajo> {
-        val newTipoTrabajo = tipoTrabajoRepository.save(tipoTrabajo)
-        return ResponseEntity.ok(newTipoTrabajo)
+    fun createEmploye(@RequestBody @Valid tipoTRabajoDTO: TipoTRabajoDTO): ResponseEntity<TipoTrabajo> {
+       val ttrabajo = TipoTrabajo(
+           id = 0L,
+           nombre = tipoTRabajoDTO.nombre,
+           descripcion = tipoTRabajoDTO.descripcion,
+           valorUnidad = tipoTRabajoDTO.valorUnidad
+       )
+        val nuevoTTrabajo = tipoTrabajoRepository.save(ttrabajo)
+        return ResponseEntity.ok(nuevoTTrabajo)
     }
 
     @GetMapping("/search/{id}")
