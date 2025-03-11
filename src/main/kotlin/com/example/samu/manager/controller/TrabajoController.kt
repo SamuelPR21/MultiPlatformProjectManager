@@ -1,5 +1,6 @@
 package com.example.samu.manager.controller
 
+import com.example.samu.manager.config.servicies.TrabajoService
 import com.example.samu.manager.config.servicies.dto.TrabajoDTO
 import com.example.samu.manager.models.Trabajo
 import com.example.samu.manager.models.TrabajoEmpleado
@@ -9,6 +10,8 @@ import jakarta.validation.Valid
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.security.core.annotation.AuthenticationPrincipal
+import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.web.bind.annotation.*
 import java.time.LocalDate
 
@@ -18,8 +21,8 @@ import java.time.LocalDate
 @RequestMapping("/job")
 class TrabajoController(
     @Autowired private val trabajoRepository: TrabajoRepository,
-    private val tipoTrabajoRepository: TipoTrabajoRepository,
-    private val usuarioReposittory: UsuarioReposittory,
+    @Autowired private val trabajoService: TrabajoService,
+    private val usuarioRepository: UsuarioRepository,
     private val clienteRepository: ClienteRepository,
     private val empleadoRepository: EmpleadoRepository,
     private val maquinaRepository: MaquinaRepository,
@@ -28,12 +31,24 @@ class TrabajoController(
 ){
 
     @GetMapping("/todos")
-    fun getAllTrabajo(): List<TrabajoDTO> {
-        return  trabajoRepository.findAll().map { trabajo->
+    fun getAllTrabajo(@AuthenticationPrincipal usuario: UserDetails?): ResponseEntity<List<TrabajoDTO>> {
+        if (usuario == null) {
+            println("El usuario no está autenticado o no se ha inyectado correctamente.")
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build()
+        }
+
+        println("Usuario autenticado en el controlador: ${usuario.username}")
+        println("Roles del usuario en el controlador: ${usuario.authorities}")
+
+        val nombreUsuario = usuario.username
+        val usuarioEntity = usuarioRepository.findByNombreUsuario(nombreUsuario)
+            ?: return ResponseEntity.notFound().build()
+
+        val trabajos = trabajoService.obtenerTrabajosPorUsuario(usuarioEntity.id).map { trabajo ->
             TrabajoDTO(
                 nombre = trabajo.nombre ?: "",
-                descripcionCorta = trabajo.descripcionCorta  ?: "",
-                estado = trabajo.estado  ?: "",
+                descripcionCorta = trabajo.descripcionCorta ?: "",
+                estado = trabajo.estado ?: "",
                 fechaInicio = trabajo.fechaInicio ?: LocalDate.now(),
                 fechaFinalizacion = trabajo.fechaFinalizacion ?: LocalDate.now(),
                 cliente = trabajo.cliente.id,
@@ -42,12 +57,14 @@ class TrabajoController(
                 maquinas = trabajo.maquinas.map { it.maquina.id }
             )
         }
+
+        return ResponseEntity.ok(trabajos)
     }
 
     @PostMapping("/crear")
     fun createJob(@RequestBody @Valid trabajoDTO: TrabajoDTO): ResponseEntity<TrabajoDTO> {
 
-        val usuario = usuarioReposittory.findById(trabajoDTO.usuario)
+        val usuario = usuarioRepository.findById(trabajoDTO.usuario)
             .orElseThrow { IllegalArgumentException("El usuario con ID ${trabajoDTO.usuario} no existe") }
 
         val cliente = clienteRepository.findById(trabajoDTO.cliente)
@@ -149,7 +166,7 @@ class TrabajoController(
 
             if (trabajo.containsKey("usuario")) {
                 val usuarioId = trabajo["usuario"] as Long
-                val usuarioExistente = usuarioReposittory.findById(usuarioId)
+                val usuarioExistente = usuarioRepository.findById(usuarioId)
 
                 if (usuarioExistente.isPresent){
                     jobActual.usuario = usuarioExistente.get()

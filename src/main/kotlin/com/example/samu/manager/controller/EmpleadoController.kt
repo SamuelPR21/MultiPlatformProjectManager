@@ -4,7 +4,7 @@ import com.example.samu.manager.config.servicies.dto.EmpleadoDTO
 import com.example.samu.manager.models.Empleado
 import com.example.samu.manager.models.Nivel
 import com.example.samu.manager.repositories.EmpleadoRepository
-import com.example.samu.manager.repositories.UsuarioReposittory
+import com.example.samu.manager.repositories.UsuarioRepository
 import jakarta.validation.Valid
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
@@ -17,7 +17,7 @@ import javax.swing.text.html.HTML.Tag.OL
 
 class EmpleadoControllerController (@Autowired
                                     private  val empleadoRepository: EmpleadoRepository,
-                                    private val usuarioReposittory: UsuarioReposittory
+                                    private val usuarioRepository: UsuarioRepository
 ){
 
     @GetMapping("/todos")
@@ -27,7 +27,7 @@ class EmpleadoControllerController (@Autowired
     @PostMapping("/crear")
     fun createEmploye(@RequestBody @Valid empleadoDTO: EmpleadoDTO): ResponseEntity<Empleado> {
 
-        val usuario = usuarioReposittory.findById(empleadoDTO.usuarioId)
+        val usuario = usuarioRepository.findById(empleadoDTO.usuarioId)
             .orElseThrow{IllegalArgumentException("El usuario con ID ${empleadoDTO.usuarioId} no existe")}
 
         val empleado = Empleado(

@@ -5,7 +5,7 @@ import com.example.samu.manager.models.Estado
 import com.example.samu.manager.models.Maquina
 import com.example.samu.manager.repositories.EmpleadoRepository
 import com.example.samu.manager.repositories.MaquinaRepository
-import com.example.samu.manager.repositories.UsuarioReposittory
+import com.example.samu.manager.repositories.UsuarioRepository
 import jakarta.validation.Valid
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.jpa.domain.AbstractPersistable_.id
@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.*
 class MaquinaController(
     @Autowired private val maquinaRepository: MaquinaRepository,
     private val empleadoRepository: EmpleadoRepository,
-    private val usuarioReposittory: UsuarioReposittory
+    private val usuarioRepository: UsuarioRepository
 ){
 
     @GetMapping("/todos")
@@ -32,7 +32,7 @@ class MaquinaController(
         val empleado = empleadoRepository.findById(maquinaDTO.empleadoEncargadoId)
             .orElseThrow{IllegalArgumentException("El empleado con ID ${maquinaDTO.empleadoEncargadoId} no existe")}
 
-        val usuario = usuarioReposittory.findById(maquinaDTO.usuarioId)
+        val usuario = usuarioRepository.findById(maquinaDTO.usuarioId)
             .orElseThrow{IllegalArgumentException("El usuario con ID ${maquinaDTO.usuarioId} no existe")}
 
         val maquina = Maquina(

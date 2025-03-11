@@ -3,7 +3,7 @@ package com.example.samu.manager.controller
 import com.example.samu.manager.config.servicies.dto.ClienteDTO
 import com.example.samu.manager.models.Cliente
 import com.example.samu.manager.repositories.ClienteRepository
-import com.example.samu.manager.repositories.UsuarioReposittory
+import com.example.samu.manager.repositories.UsuarioRepository
 import jakarta.validation.Valid
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*
 
 class ClienteController(@Autowired
                         private val clienteRepository: ClienteRepository,
-                        private val usuarioReposittory: UsuarioReposittory
+                        private val usuarioRepository: UsuarioRepository
 ) {
 
     @GetMapping("/todos")
@@ -25,7 +25,7 @@ class ClienteController(@Autowired
 
     @PostMapping("/crear")
     fun createCustomer(@RequestBody @Valid clienteDTO: ClienteDTO): ResponseEntity<Cliente> {
-        val usuario = usuarioReposittory.findById(clienteDTO.usuarioId)
+        val usuario = usuarioRepository.findById(clienteDTO.usuarioId)
             .orElseThrow{IllegalArgumentException("El usuario con ID ${clienteDTO.usuarioId} no existe")}
 
         val cliente = Cliente(
