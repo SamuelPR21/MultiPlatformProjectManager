@@ -1,11 +1,3 @@
----
-name: Sugerencia de Buenas Prácticas
-about: Proporciona sugerencias sobre cómo mejorar las buenas prácticas en el código y la estructura del proyecto.
-title: 'Sugerencia sobre buenas prácticas'
-labels: enhancement
-assignees: ''
-
----
 
 ## Descripción
 Por favor, proporciona una descripción clara y detallada sobre la sugerencia relacionada con las buenas prácticas. ¿Qué aspecto de la aplicación crees que podría mejorarse? ¿Por qué es importante? Ejemplos podrían ser optimización de código, mejores prácticas de seguridad, o mejoras en la experiencia del usuario.
