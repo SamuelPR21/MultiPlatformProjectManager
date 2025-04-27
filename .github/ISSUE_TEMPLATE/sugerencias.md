@@ -1,3 +1,4 @@
+
 ## Descripción
 Por favor, proporciona una descripción clara y detallada sobre la sugerencia relacionada con las buenas prácticas. ¿Qué aspecto de la aplicación crees que podría mejorarse? ¿Por qué es importante? Ejemplos podrían ser optimización de código, mejores prácticas de seguridad, o mejoras en la experiencia del usuario.
 
